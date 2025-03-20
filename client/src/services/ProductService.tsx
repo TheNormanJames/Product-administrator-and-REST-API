@@ -1,5 +1,6 @@
 import { safeParse } from "valibot";
 import { DraftProductSchema } from "../types";
+import axios from "axios";
 
 type ProductData = {
   [k: string]: FormDataEntryValue;
@@ -8,10 +9,14 @@ type ProductData = {
 export function addProduct(data: ProductData) {
   try {
     const result = safeParse(DraftProductSchema, {
-      name: data.name,
+      ...data,
       price: +data.price,
     });
-    console.log(result);
+    if (data.success) {
+      const url = "http:localhost:4000/api/products";
+    } else {
+      throw new Error("Datos no Válidos");
+    }
   } catch (error) {
     console.log(error);
   }
