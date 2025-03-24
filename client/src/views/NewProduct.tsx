@@ -2,25 +2,26 @@ import {
   ActionFunctionArgs,
   Form,
   Link,
+  redirect,
   useActionData,
-} from "react-router-dom";
-import ErrorMessage from "../components/ErrorMessage";
-import { addProduct } from "../services/ProductService";
+} from 'react-router-dom';
+import ErrorMessage from '../components/ErrorMessage';
+import { addProduct } from '../services/ProductService';
 
 export async function action({ request }: ActionFunctionArgs) {
   const data = Object.fromEntries(await request.formData());
 
-  let error = "";
-  if (Object.values(data).includes("")) {
-    error = "Todos los campos son obligatorios";
+  let error = '';
+  if (Object.values(data).includes('')) {
+    error = 'Todos los campos son obligatorios';
   }
   if (error.length) {
     return error;
   }
 
-  addProduct(data);
+  await addProduct(data);
 
-  return {};
+  return redirect('/');
 }
 
 export default function NewProduct() {
@@ -34,7 +35,7 @@ export default function NewProduct() {
           Registrar Producto
         </h2>
         <Link
-          to={"/"}
+          to={'/'}
           className="rounded-md bg-indigo-600 p-3 text-sm font-bold text-white shadow-sm hover:bg-indigo-500"
         >
           Volver a Productos

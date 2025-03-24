@@ -1,21 +1,44 @@
-import { safeParse } from "valibot";
-import { DraftProductSchema } from "../types";
-import axios from "axios";
+import { safeParse } from 'valibot';
+import { DraftProductSchema, ProductsSchema } from '../types';
+import axios from 'axios';
 
 type ProductData = {
   [k: string]: FormDataEntryValue;
 };
 
-export function addProduct(data: ProductData) {
+export async function addProduct(data: ProductData) {
   try {
     const result = safeParse(DraftProductSchema, {
       ...data,
       price: +data.price,
     });
-    if (data.success) {
-      const url = "http:localhost:4000/api/products";
+    // console.log(result);
+
+    if (result.success) {
+      const url = `${import.meta.env.VITE_API_URL}/api/products`;
+      // console.log(url);
+
+      await axios.post(url, {
+        name: result.output.name,
+        price: result.output.price,
+      });
     } else {
-      throw new Error("Datos no Válidos");
+      throw new Error('Datos no Válidos');
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function getProducts() {
+  try {
+    const url = `${import.meta.env.VITE_API_URL}/api/products`;
+    const { data } = await axios(url);
+    const result = safeParse(ProductsSchema, data.data);
+    if (result.success) {
+      return result.output;
+    } else {
+      throw new Error('Hubo un error En el safeParse');
     }
   } catch (error) {
     console.log(error);
